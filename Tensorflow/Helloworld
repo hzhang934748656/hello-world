@@ -1,0 +1,9 @@
+# this is my first tensorflow code
+import tensorflow as tf
+hello = tf.constant('1hola, Tensorflow')
+
+#start tf session
+sess = tf.Session()
+
+#run graph
+print(sess.run(hello))
