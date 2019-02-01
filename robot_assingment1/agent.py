@@ -36,21 +36,20 @@ root.geometry("1000x1000")
 canvas = Canvas(root, bg="old lace", height = 1000, width = 1000)
 
 #create rubblish
-rubbish_X = []
-rubbish_Y = []
+rubblish = []
 rubblish_image = PhotoImage(file = "rubbish.gif")
 
 def addrubbish():
-	for i in range(0,random.randint(1,4)):
+	for i in range(0,random.randint(1,5)):
 		random_rubblish_x= random.randint(0,9)
 		random_rubblish_y= random.randint(0,9)
-		canvas.create_image((random_rubblish_x*100),(random_rubblish_y*100),anchor = "nw",image = rubblish_image)
-		rubbish_X.append(random_rubblish_x*100)
-		rubbish_Y.append(random_rubblish_y*100)
-		#print(rubbish_X)
+		if (random_rubblish_x,random_rubblish_y) not in new_wall_new:
+			canvas.create_image((random_rubblish_x*100),(random_rubblish_y*100),anchor = "nw",image = rubblish_image)
+			rubblish.append([random_rubblish_x*100,random_rubblish_y*100])
+		print(rubblish)
 		#print(rubbish_Y)
 
-addrubbish()
+
 #create wall pic
 wall_image = PhotoImage(file = "wall.gif")
 for x in new_wall_new:
@@ -61,11 +60,13 @@ def cleanrubbish():
 #create button
 #button_cleanrubbish= Button(root,text="Start clean", anchor= "sw",command = cleanrubbish)
 #button_cleanrubbish.pack()
+
 #create the cross line
 for x in range(0,1000,100):
 	canvas.create_line(x,0,x,1000,fill="black")
 for y in range(0,1000,100):
 	canvas.create_line(0,y,1000,y,fill='black')
+
 #create robot
 image_file = PhotoImage(file = "robot.gif")
 robot =canvas.create_image(400,400,anchor = 'nw', image=image_file)
@@ -163,6 +164,7 @@ p = Agent(None,400,400,0)
 canvas.pack()
 for i in range(1,100):
 	p.total_cost = 0
+	addrubbish()
 	(new_x,new_y,total_cost) = move(p)
 	print("the total cost is ",total_cost)
 
