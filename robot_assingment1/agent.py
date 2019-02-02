@@ -1,32 +1,16 @@
 import time
 import random
-'''
-class Agent:
-	def __init__(self, parent, x, y, dist):
-        self.parent = parent
-        self.x = x
-        self.y = y
-        self.dist = dist
-class Fuct:
-	def __init__(self,s_x,s_y,t_x,t_y):
-		self.s_x = s_x
-		self.s_y = s_y
-		self.target_x = target_x
-		self.target_y = target_y
-		
-	def Battary_check(self):
-		if Battary_remain < (Battary_total/2):
-			pass
-	def move(self):
-		roll = random(0,4)
-		if roll == 0:
-			move_up(current_location)
-	def move_up(self,current_location):
-		current_location(self.x,self.y)
-	def move_down():	
-	def move_left():	
-	def move_right():
-'''
+
+initial_map = [[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+	[-1, 0, 0, 0, 0, 0, 0, 0, 0,-1],
+	[-1, 0, 0, 0, 0, 0, 0, 0, 0,-1],
+	[-1, 0, 0, 0, 0, 0, 0, 0, 0,-1],
+	[-1, 0, 0, 0, 0, 0, 0, 0, 0,-1],
+	[-1, 0, 0, 0, 0, 0, 0, 0, 0,-1],
+	[-1, 0, 0, 0, 0, 0, 0, 0, 0,-1],
+	[-1, 0, 0, 0, 0, 0, 0, 0, 0,-1],
+	[-1, 0, 0, 0, 0, 0, 0, 0, 0,-1],
+	[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]]
 new_wall_new = [(300, 0), (100, 900), (500, 0), (300, 900), (0, 400), (100, 300), (700, 0), (400, 500), (500, 900), (0, 200), (900, 0), (900, 700), (700, 900), (0, 800), (200, 600), (0, 500), (900, 900), (0, 700), (400, 200), (200, 400), (0, 300), (600, 400), (400, 800), (800, 400), (0, 900), (200, 900), (400, 300), (0, 0), (900, 200), (400, 900), (200, 300), (200, 0), (900, 100), (900, 400), (600, 900), (200, 500), (400, 0), (800, 900), (0, 100), (600, 0), (400, 600), (800, 0), (100, 0), (400, 100), (700, 400), (0, 600), (400, 700), (900, 300), (900, 600), (900, 500), (900, 800)]
 from tkinter import *
 root = Tk()
@@ -40,13 +24,16 @@ rubblish = []
 rubblish_image = PhotoImage(file = "rubbish.gif")
 
 def addrubbish():
-	for i in range(0,random.randint(1,5)):
+	for i in range(0,500):
 		random_rubblish_x= random.randint(0,9)
 		random_rubblish_y= random.randint(0,9)
-		if (random_rubblish_x,random_rubblish_y) not in new_wall_new:
+		if (random_rubblish_x*100,random_rubblish_y*100) not in new_wall_new:
 			canvas.create_image((random_rubblish_x*100),(random_rubblish_y*100),anchor = "nw",image = rubblish_image)
 			rubblish.append([random_rubblish_x*100,random_rubblish_y*100])
-		print(rubblish)
+			initial_map[random_rubblish_y][random_rubblish_x] = 1
+			print(len(rubblish))
+
+		return len(rubblish)
 		#print(rubbish_Y)
 
 
@@ -73,33 +60,36 @@ robot =canvas.create_image(400,400,anchor = 'nw', image=image_file)
 def move_up():
 	canvas.move(robot,0,-100)
 	canvas.update()
-	#time.sleep(1)
+	time.sleep(0.1)
 
 def move_down():
 	canvas.move(robot,0,100)
 	canvas.update()
-	#time.sleep(1)
+	time.sleep(0.1)
 
 def move_left():
 	canvas.move(robot,-100,0)
 	canvas.update()
-	#time.sleep(1)
+	time.sleep(0.1)
 
 def move_right():
 	canvas.move(robot,100,0)
 	canvas.update()
-	#time.sleep(1)
+	time.sleep(0.1)
 
 # move the robot and update the location
 def move(p):
 	moved_map = [[p.x,p.y]]
 	
-	for i in range(0,300):
+	for i in range(0,20):
 		clock = 1
 		roll = random.randint(0,4)
 		if roll == 0:
-			for x,y in new_wall_new:
+			for x,y in new_wall_new: #if the robot hit the wall
 				if (x,y) == (p.x,p.y-100):
+					canvas.move(robot,0,0)
+					canvas.update()
+					time.sleep(0.1)
 					clock = 0
 					break
 			while clock:
@@ -108,6 +98,9 @@ def move(p):
 					moved_map.append([p.x,p.y])
 				p.x = p.x
 				p.y = p.y - 100
+				Suck_dirt(p.x,p.y)
+				canvas.update()
+
 				p.total_cost += 1
 
 				break
@@ -122,6 +115,8 @@ def move(p):
 					moved_map.append([p.x,p.y])
 				p.x = p.x
 				p.y = p.y + 100
+				Suck_dirt(p.x,p.y)
+				canvas.update()
 				p.total_cost += 1
 				break
 		if roll == 2:
@@ -135,6 +130,8 @@ def move(p):
 					moved_map.append([p.x,p.y])
 				p.x = p.x -100
 				p.y = p.y
+				Suck_dirt(p.x,p.y)
+				canvas.update()
 				p.total_cost += 1
 				break
 		if roll == 3:
@@ -148,10 +145,17 @@ def move(p):
 					moved_map.append([p.x,p.y])
 				p.x = p.x + 100
 				p.y = p.y
+				Suck_dirt(p.x,p.y)
+				canvas.update()
 				p.total_cost += 1
 				break
 	print("the len of the moved_map:",len(moved_map))
 	return p.x,p.y,p.total_cost
+
+def Suck_dirt(x,y):
+	#pass
+	canvas.create_rectangle(x,y,x+100,y+100,fill = "old lace")
+	initial_map[int(y/100)][int(x/100)] = 0
 
 class Agent:
 	def __init__(self, parent, x, y, total_cost):
@@ -162,10 +166,21 @@ class Agent:
 # initialize the location
 p = Agent(None,400,400,0)
 canvas.pack()
-for i in range(1,100):
+All_total_cost = 0
+count_rubblish = 0
+for i in range(0,1):
 	p.total_cost = 0
-	addrubbish()
+	rubblish_total= addrubbish()
 	(new_x,new_y,total_cost) = move(p)
 	print("the total cost is ",total_cost)
+	All_total_cost = total_cost + All_total_cost
+	for a in initial_map:
+		for x in a:
+			if x == 1:
+				count_rubblish += 1
+	print("the total rubblish is ",rubblish_total)
+	print("the rubblish remain is ",count_rubblish)
+print("Done")
+print(All_total_cost)
 
 root.mainloop()
