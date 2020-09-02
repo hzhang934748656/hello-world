@@ -20,4 +20,8 @@ class Solution:
             nums1[p] = nums2[p2]
             p-=1
             p2-=1
-                
+ 
+
+
+### Time complexity O(m+n)
+### Space complexity O(1)
